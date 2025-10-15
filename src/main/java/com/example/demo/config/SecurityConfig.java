@@ -16,7 +16,7 @@ public SecurityFilterChain filterChain (HttpSecurity http) throws Exception
  http.authorizeHttpRequests((requests)->requests
     .anyRequest().authenticated())
  			.oauth2Login(Customizer.withDefaults());
- 	return http.build();
+ 	    return http.build();
 }
 
 }
