@@ -18,16 +18,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 @Entity
-public class Categorie {
+public class Developer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idCat;
-	private String nomCat;
-	private String descriptionCat;
+	private Long idDev;
+	private String nomDev;
+	private String descriptionDev;
 	
     @JsonIgnore
-	@OneToMany(mappedBy = "categorie")
-	private List<Produit> produits;
+	@OneToMany(mappedBy = "developer")
+	private List<Logiciel> logiciels;
 	
 
 }

@@ -16,53 +16,43 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	
-	
-	@Autowired
-	KeycloakRoleConverter keycloakRoleConverter;
-	
-	@Bean
-	public SecurityFilterChain filterChain (HttpSecurity http) throws Exception
-	{
-		http.sessionManagement( session -> 
-		session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-		.csrf( csrf -> csrf.disable()) 
-		
-		.cors(cors -> cors.configurationSource(new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration cors = new CorsConfiguration();
-                cors.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-                cors.setAllowedMethods(Collections.singletonList("*"));
-                cors.setAllowedHeaders(Collections.singletonList("*"));
-                cors.setExposedHeaders(Collections.singletonList("Authorization"));
-                
-                return cors;
-            }
+
+  @Autowired
+  KeycloakRoleConverter keycloakRoleConverter;
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .csrf(csrf -> csrf.disable())
+
+        .cors(cors -> cors.configurationSource(new CorsConfigurationSource() {
+          @Override
+          public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+            CorsConfiguration cors = new CorsConfiguration();
+            cors.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+            cors.setAllowedMethods(Collections.singletonList("*"));
+            cors.setAllowedHeaders(Collections.singletonList("*"));
+            cors.setExposedHeaders(Collections.singletonList("Authorization"));
+
+            return cors;
+          }
         }))
-				
-	     .authorizeHttpRequests( requests -> requests
-			    		  .requestMatchers("/api/all/**").hasAnyAuthority("ADMIN","USER")
-						  .requestMatchers(HttpMethod.GET,"/api/getbyid/**").hasAnyAuthority("ADMIN",
-						  "USER")
-						  .requestMatchers(HttpMethod.POST,"/api/addprod/**").hasAnyAuthority("ADMIN")
-						  .requestMatchers(HttpMethod.PUT,"/api/updateprod/**").hasAuthority("ADMIN")
-						  .requestMatchers(HttpMethod.DELETE,"/api/delprod/**").hasAuthority("ADMIN")
-						.anyRequest().authenticated() )
-	                  //  .oauth2ResourceServer(rs -> rs.jwt(Customizer.withDefaults()));
-	     				  .oauth2ResourceServer(rs->rs.jwt(jwt->
-	     				  			jwt.jwtAuthenticationConverter(keycloakRoleConverter)));
-	    
-	     
-	 
-		
-	return http.build();
-	}
-	
+
+        .authorizeHttpRequests(requests -> requests
+            .requestMatchers("/api/all/**").hasAnyAuthority("ADMIN", "USER")
+            .requestMatchers(HttpMethod.GET, "/api/getbyid/**").hasAnyAuthority("ADMIN",
+                "USER")
+            .requestMatchers(HttpMethod.POST, "/api/addprod/**").hasAnyAuthority("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/api/updateprod/**").hasAuthority("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/delprod/**").hasAuthority("ADMIN")
+            .anyRequest().authenticated())
+        // .oauth2ResourceServer(rs -> rs.jwt(Customizer.withDefaults()));
+        .oauth2ResourceServer(rs -> rs.jwt(jwt -> jwt.jwtAuthenticationConverter(keycloakRoleConverter)));
+
+    return http.build();
+  }
 
 }
